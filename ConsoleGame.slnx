@@ -3,12 +3,10 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="ConsoleGameProject2/ConsoleGameProject2.vcxproj" Id="73fdfdcd-a11e-46bd-8113-d219bd9da4b3">
-    <Build Solution="*|x86" Project="false" />
-  </Project>
   <Project Path="CraftEngine/CraftEngine.vcxproj" Id="bf0c4592-7632-4ef1-ad89-3e50117821c4">
     <Build Solution="*|x86" Project="false" />
   </Project>
+  <Project Path="MoleGame/MoleGame.vcxproj" Id="c877fdc7-597b-4e4f-a501-2551f857e937" />
   <Project Path="SoundSystem/SoundSystem.vcxproj" Id="b1be2209-a49a-4073-bedb-5c2cb1b09144">
     <Build Solution="*|x86" Project="false" />
   </Project>
