@@ -212,7 +212,7 @@ namespace Craft
     			// 필요한 인덱스 좌표 변환.
     			const int index = (y * width) + x;
     
-    			// 글자 항목 초기화.
+    			// 글자 항목 초기화.F
     			CHAR_INFO& info = charInfoArray[index];
     			// 빈문자 설정 - 기존의 설정된 값 지우기.
     			info.Char.UnicodeChar = ' ';

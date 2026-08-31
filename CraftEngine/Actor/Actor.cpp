@@ -1,6 +1,7 @@
 ﻿#include "Actor/Actor.h"
 #include <Engine/Engine.h>
-#include<Render/Renderer.h>
+#include <Render/Renderer.h>
+#include <Level/Level.h>
 
 namespace Craft
 {
@@ -29,9 +30,15 @@ namespace Craft
 	void  Actor::Draw()
 	{
 		if (!IsActive()) return;
-
+		Vector2 newPosition = position;
+		std::shared_ptr<Level> level = GetOwner();
+		if (level)
+		{
+			newPosition = position - level->GetCameraPosition();
+		}
+		if (newPosition.x < 0 || newPosition.y < 0) return;
 		//렌더러에 필요한 데이터 제출
-		Renderer::Get().Submit(image, position, color, sortingOrder);
+		Renderer::Get().Submit(image, newPosition, color, sortingOrder);
 
 	}
 
