@@ -10,6 +10,7 @@ public:
 	// 화면 가로세로 크기 가져오는 게터
 	int GetFrameWidth() { return GetWidth(); }
 	int GetFrameHeight() { return GetHeight(); }
+	int GetFrameRate() { return GetRate(); }
 private:
 
 };

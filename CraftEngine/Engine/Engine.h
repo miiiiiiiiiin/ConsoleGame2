@@ -62,6 +62,7 @@ namespace Craft
 		//콘솔 너비 높이 Getter
 		inline int GetWidth() const { return setting.width; }
 		inline int GetHeight() const { return setting.height; }
+		inline int GetRate() const { return setting.framerate; }
 
 	protected:
 		//입력 처리 함수(입력 폴링)

@@ -24,6 +24,9 @@ private:
 	// 맵불러오기
 	void LoadMap(const std::string& filename);
 
+	// framerate 확인
+	void FrameRate(float deltaTime);
+
 private:
 	/* 멤버변수 */
 	// 카메라 포지션
@@ -32,6 +35,8 @@ private:
 	// 카메라 이동시 
 	float cameraElapsedTime = 0.0f;
 	// 카메라를 초당 몇칸씩 움직일지..
-	float cameraSpeed = 0.5f;
+	float cameraSpeed = 30.0f;
+
+	float FPS= 0.0f;
 };
 

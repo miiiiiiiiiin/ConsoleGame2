@@ -16,33 +16,31 @@ void GameLevel::OnInitialized()
 void GameLevel::Tick(float deltaTime)
 {
 	Level::Tick(deltaTime);
-
+	FPS = 1.0f / deltaTime;
 	// 카메라 이동
-	UpdateCamera(deltaTime);
+	//UpdateCamera(deltaTime);
 }
 
 void GameLevel::UpdateCamera(float deltaTime)
 {
-	cameraElapsedTime += deltaTime;
 	// 프레임 크기 가져오기
 	Game& game = dynamic_cast<Game&>(Engine::Get());
 	int screenWidth = game.GetFrameWidth();
 	int screenHeight = game.GetFrameHeight();
-
+	float CameraX = 0.0f;
 	// 카메라 위치 이동
 	if (cameraPosition.x < 427 - screenWidth)
 	{
-		cameraPosition.x += static_cast<int>(cameraSpeed * cameraElapsedTime);
+		CameraX = cameraSpeed * deltaTime;
+		cameraPosition.x += static_cast<int>(CameraX);	
 	}
-	// 총 길이 넘지 않도록 제한
-	//cameraPosition.x = std::min(cameraPosition.x, 427 - screenWidth);
-
 }
+
 void GameLevel::Draw()
 {
 	Level::Draw();
-	// GameLevel::Draw()에 임시로 추가
-	//Renderer::Get().Submit(L"dt: " + std::to_wstring(deltaTime), Vector2(0, 20), Color::RED);
+	// 초당프레임수 확인
+	Renderer::Get().Submit(L"FPS: " + std::to_wstring(FPS), Vector2(0, 0), Color::RED);
 }
 
 void GameLevel::LoadMap(const std::string& filename)
@@ -68,7 +66,7 @@ void GameLevel::LoadMap(const std::string& filename)
 	assert(readSize > 0 && "No data in the stage file.");
 
 	int index = 0;
-	Vector2	position = Vector2(0, 0);
+	Vector2	position = Vector2(0, 2);
 
 	// 사이즈 다 읽을때까지..
 	while (index < (int)readSize)
@@ -97,5 +95,11 @@ void GameLevel::LoadMap(const std::string& filename)
 	buffer = nullptr;
 	fclose(file);
 	file = nullptr;
+
+}
+
+void GameLevel::FrameRate(float deltaTime)
+{
+	Renderer::Get().Submit(L"FrameRate: " + std::to_wstring(1.0f / deltaTime), Vector2(0, 0), Color::RED);
 
 }
