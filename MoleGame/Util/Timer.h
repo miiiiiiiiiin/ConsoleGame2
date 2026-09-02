@@ -7,7 +7,7 @@ public:
 	void TimerSetting(float time) { targetTime = time; }
 
 	// 리셋
-	void Reset() { targetTime = 0; elapsedTime = 0; }
+	void Reset() { elapsedTime = 0.0f; }
 
 	// 타이머 시작
 	void Tick(float deltaTime);

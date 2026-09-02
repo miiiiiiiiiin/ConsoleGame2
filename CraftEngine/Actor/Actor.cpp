@@ -32,11 +32,15 @@ namespace Craft
 		if (!IsActive()) return;
 		Vector2 newPosition = position;
 		std::shared_ptr<Level> level = GetOwner();
+		// HACK: make_shared로 햇는데 충돌 안나는지..
+		//std::shared_ptr<Engine> game = std::make_shared<Engine>();
 		if (level)
 		{
 			newPosition = position - level->GetCameraPosition();
 		}
-		if (newPosition.x < 0 || newPosition.y < 0) return;
+		if (newPosition.x < 0 || newPosition.x >= Engine::Get().GetWidth()
+			|| newPosition.y < 0 || newPosition.y >= Engine::Get().GetHeight())
+			return;
 		//렌더러에 필요한 데이터 제출
 		Renderer::Get().Submit(image, newPosition, color, sortingOrder);
 

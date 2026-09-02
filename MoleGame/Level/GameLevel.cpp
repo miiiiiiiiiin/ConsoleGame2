@@ -4,6 +4,7 @@
 #include <Game/Game.h>
 #include <Actor/Mole.h>
 #include <Actor/Wall.h>
+#include <Actor/Dirt.h>
 
 using namespace Craft;
 void GameLevel::OnInitialized()
@@ -18,7 +19,7 @@ void GameLevel::Tick(float deltaTime)
 	Level::Tick(deltaTime);
 	FPS = 1.0f / deltaTime;
 	// 카메라 이동
-	//UpdateCamera(deltaTime);
+	UpdateCamera(deltaTime);
 }
 
 void GameLevel::UpdateCamera(float deltaTime)
@@ -27,12 +28,21 @@ void GameLevel::UpdateCamera(float deltaTime)
 	Game& game = dynamic_cast<Game&>(Engine::Get());
 	int screenWidth = game.GetFrameWidth();
 	int screenHeight = game.GetFrameHeight();
-	float CameraX = 0.0f;
 	// 카메라 위치 이동
 	if (cameraPosition.x < 427 - screenWidth)
 	{
-		CameraX = cameraSpeed * deltaTime;
-		cameraPosition.x += static_cast<int>(CameraX);	
+		// 위치 이동(float)
+		cameraAccumX += cameraSpeed * deltaTime;
+		// int형으로 소수점 버림
+		int move = (int)cameraAccumX;
+		// int 로 바꿧는데 0이상이면 이동시키고 Camerax 소수점 유지시킴
+		if (move > 0) 
+		{
+			CameraX += move; // 카메라 위치 ++
+			cameraAccumX -= move; // 소수점 남겨놓기
+		}
+		// 위치 업데이트
+		cameraPosition.x = CameraX;
 	}
 }
 
@@ -87,6 +97,9 @@ void GameLevel::LoadMap(const std::string& filename)
 		case 'P':
 			SpawnActor<Mole>(position);
 			break;
+		case 'D':
+			SpawnActor<Dirt>(position);
+			break;
 		}
 		position.x++;
 	}
@@ -102,4 +115,19 @@ void GameLevel::FrameRate(float deltaTime)
 {
 	Renderer::Get().Submit(L"FrameRate: " + std::to_wstring(1.0f / deltaTime), Vector2(0, 0), Color::RED);
 
+}
+
+bool GameLevel::CanMove(const Craft::Vector2& playerPosition, const Craft::Vector2& nextPosition)
+{
+	Vector2 dir = nextPosition - playerPosition;
+	Vector2 newPosition = playerPosition + dir;
+	for (std::shared_ptr<Actor> actor : actorList)
+	{
+		if (actor->GetPosition() == newPosition)
+		{
+			if (actor->IsTypeOf<Wall>())
+				return false;
+		}
+	}
+	return true;
 }

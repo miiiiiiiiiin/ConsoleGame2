@@ -104,6 +104,7 @@ namespace Craft
 		Vector2 GetCameraPosition() const { return cameraPosition; }
 		void SetCameraPosition(const Vector2& pos) { cameraPosition = pos; }
 
+
 	protected:
 		//이전 프레임에 추가/제거 요청된 액터 처리 함수
 		void ProcessAddAndDestroyActors();

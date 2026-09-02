@@ -166,6 +166,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Actor\ActorFactory.h" />
+    <ClInclude Include="Actor\Dirt.h" />
     <ClInclude Include="Actor\Mole.h" />
     <ClInclude Include="Actor\Wall.h" />
     <ClInclude Include="Game\Game.h" />
@@ -173,6 +174,7 @@
     <ClInclude Include="Util\Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Actor\Dirt.cpp" />
     <ClCompile Include="Actor\Mole.cpp" />
     <ClCompile Include="Actor\Wall.cpp" />
     <ClCompile Include="Game\Game.cpp" />
