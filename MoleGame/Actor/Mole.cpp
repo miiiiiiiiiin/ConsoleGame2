@@ -3,7 +3,7 @@
 #include <Level/GameLevel.h>
 
 using namespace Craft;
-Mole::Mole(const Vector2& position) : Actor(L"P", position, Color::CYAN), timer(0.2)
+Mole::Mole(const Vector2& position) : Actor(L"P", position, Color::CYAN), timer(0.2f)
 {
 }
 
@@ -19,6 +19,7 @@ void Mole::Tick(float deltaTime)
 	GetKey('S');
 	GetKey('D');
 
+	timer.Reset();
 
 }
 

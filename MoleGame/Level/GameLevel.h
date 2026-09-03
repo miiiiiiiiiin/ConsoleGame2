@@ -1,6 +1,9 @@
 ﻿#pragma once
 #include <Level/Level.h>
 #include <Math/Vector2.h>
+#include <Input/Input.h>
+
+#include <unordered_map>
 
 class GameLevel : public Craft::Level
 {
@@ -14,6 +17,13 @@ public:
 
 	// 이동 가능 
 	bool CanMove(const Craft::Vector2& playerPosition, const Craft::Vector2& nextPosition);
+
+	// 부서도 되는 블럭인지 판정
+	bool IsBombBlock();
+
+	// 쿼드트리 판정 함수(폭탄 설치 시 실행)
+	void BombBlockByQuadTree();
+
 private:
 	/* 멤버함수 */
 
@@ -28,6 +38,10 @@ private:
 
 	// framerate 확인
 	void FrameRate(float deltaTime);
+
+	// 출력 사이즈에 맞는 액터만 가져오도록 하는 함수
+	// 벡터인 액터 리스트에 화면 크기의 액터만 담는다. -> 화면이 1 이동할 때마다 세로 한 줄을 빼고 세로 한 줄을 담는다 
+
 
 
 private:
@@ -46,5 +60,13 @@ private:
 	int CameraX = 0.0f;
 	// 카메라용 소수점 보관소
 	float cameraAccumX = 0.0f;
+
+	std::unordered_map<int64_t, std::shared_ptr<Craft::Actor>> blockGrid;
+
+	int64_t EncodePos(int x, int y) const
+	{
+		return (int64_t)x * 100000 + y;
+	}
+
 };
 

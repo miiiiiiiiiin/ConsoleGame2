@@ -5,6 +5,8 @@
 #include <Actor/Mole.h>
 #include <Actor/Wall.h>
 #include <Actor/Dirt.h>
+#include <Actor/BombPlacement.h>
+#include <Actor/QuadTree/QuadTreeNode.h>
 
 using namespace Craft;
 void GameLevel::OnInitialized()
@@ -12,6 +14,8 @@ void GameLevel::OnInitialized()
 	Level::OnInitialized();
 
 	LoadMap("Map.txt");
+	//SpawnActor<BombPlacement>(Input::Get().GetMousePosition());
+
 }
 
 void GameLevel::Tick(float deltaTime)
@@ -19,7 +23,7 @@ void GameLevel::Tick(float deltaTime)
 	Level::Tick(deltaTime);
 	FPS = 1.0f / deltaTime;
 	// 카메라 이동
-	UpdateCamera(deltaTime);
+	//UpdateCamera(deltaTime);
 }
 
 void GameLevel::UpdateCamera(float deltaTime)
@@ -89,6 +93,9 @@ void GameLevel::LoadMap(const std::string& filename)
 			position.x = 0;
 			continue;
 		}
+		
+		//ActorFactory::Create(mapChar, *this, position);
+
 		switch (mapChar)
 		{
 		case '#':
@@ -97,8 +104,12 @@ void GameLevel::LoadMap(const std::string& filename)
 		case 'P':
 			SpawnActor<Mole>(position);
 			break;
+		case 'B':
+			SpawnActor<BombPlacement>(position);
+			break;
 		case 'D':
-			SpawnActor<Dirt>(position);
+			//SpawnActor<Dirt>(position);
+			blockGrid[EncodePos(position.x, position.y)] = SpawnActor<Dirt>(position);
 			break;
 		}
 		position.x++;
@@ -130,4 +141,42 @@ bool GameLevel::CanMove(const Craft::Vector2& playerPosition, const Craft::Vecto
 		}
 	}
 	return true;
+}
+
+bool GameLevel::IsBombBlock()
+{
+	auto it = blockGrid.find(EncodePos(Input::Get().GetMousePosition().x, Input::Get().GetMousePosition().y));
+	if (it == blockGrid.end()) return false;
+	return true;
+
+	//for (std::shared_ptr<Actor> actor : actorList)
+	//{
+	//	//if (actor->IsTypeOf<Wall>())
+	//	//{
+	//	//	if(Input::Get().GetMousePosition() == actor->GetPosition())
+	//	//		return false;
+	//	//}
+	//	if (actor->IsTypeOf<Dirt>())
+	//	{
+	//		if (Input::Get().GetMousePosition() == actor->GetPosition())
+	//			return true;
+	//	}
+	//}
+	//return false;
+}
+
+void GameLevel::BombBlockByQuadTree()
+{
+	Game& game = dynamic_cast<Game&>(Engine::Get());
+	int screenWidth = game.GetFrameWidth();
+	int screenHeight = game.GetFrameHeight();
+	// 카메라 좌표 (루트 노드)
+	bound bounds(
+		{Vector2(0,0), screenWidth, screenHeight}
+	);
+	QuadTreeNode root(bounds);
+	// 루트에 액터 추가.(200번 추가..??)
+
+
+
 }

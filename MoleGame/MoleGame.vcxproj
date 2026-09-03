@@ -165,21 +165,28 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Actor\ActorFactory.h" />
+    <ClInclude Include="Actor\QuadTree\bound.h" />
+    <ClInclude Include="Core\ActorFactory.h" />
+    <ClInclude Include="Actor\Bomb.h" />
+    <ClInclude Include="Actor\BombPlacement.h" />
     <ClInclude Include="Actor\Dirt.h" />
     <ClInclude Include="Actor\Mole.h" />
     <ClInclude Include="Actor\Wall.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Level\GameLevel.h" />
+    <ClInclude Include="Actor\QuadTree\QuadTreeNode.h" />
     <ClInclude Include="Util\Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Actor\Bomb.cpp" />
+    <ClCompile Include="Actor\BombPlacement.cpp" />
     <ClCompile Include="Actor\Dirt.cpp" />
     <ClCompile Include="Actor\Mole.cpp" />
     <ClCompile Include="Actor\Wall.cpp" />
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Level\GameLevel.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Actor\QuadTree\QuadTreeNode.cpp" />
     <ClCompile Include="Util\Timer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
