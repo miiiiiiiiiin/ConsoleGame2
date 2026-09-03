@@ -167,14 +167,15 @@ bool GameLevel::IsBombBlock()
 
 void GameLevel::BombBlockByQuadTree()
 {
-	Game& game = dynamic_cast<Game&>(Engine::Get());
-	int screenWidth = game.GetFrameWidth();
-	int screenHeight = game.GetFrameHeight();
-	// 카메라 좌표 (루트 노드)
-	bound bounds(
-		{Vector2(0,0), screenWidth, screenHeight}
-	);
-	QuadTreeNode root(bounds);
+	//Game& game = dynamic_cast<Game&>(Engine::Get());
+	//int screenWidth = game.GetFrameWidth();
+	//int screenHeight = game.GetFrameHeight();
+	//// 카메라 좌표 (루트 노드)
+	//bound bounds{ Vector2(0,0), screenWidth, screenHeight };
+
+	//QuadTreeNode root(bounds);
+	//std::vector<std::shared_ptr<Actor>> nowActor;
+	//root.Query(bounds, nowActor);
 	// 루트에 액터 추가.(200번 추가..??)
 
 
