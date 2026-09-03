@@ -9,6 +9,7 @@ using namespace Craft;
 BombPlacement::BombPlacement(const Craft::Vector2 position)
 	: Actor(L"⮟", position, Color::BLUE), timer(0.2f)
 {
+	sortingOrder = 2;
 }
 
 void BombPlacement::Tick(float deltaTime)
@@ -18,7 +19,6 @@ void BombPlacement::Tick(float deltaTime)
 	// 마우스 올린 위치와 액터 블록의 위치를 비교하여 
 	// 흙 블록일 경우: 설치가능, Blue / 벽일 경우: 설치불가, Red 
 	// gamelevel에서 bool 함수를 들고와서 비교한다..
-	position = Input::Get().GetMousePosition();
 
 	std::shared_ptr<GameLevel> level = Cast<GameLevel>(GetOwner());
 
@@ -44,4 +44,5 @@ void BombPlacement::Tick(float deltaTime)
 	{
 		color = Color::RED;
 	}
+	position = Input::Get().GetMousePosition();
 }
