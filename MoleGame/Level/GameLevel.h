@@ -2,6 +2,7 @@
 #include <Level/Level.h>
 #include <Math/Vector2.h>
 #include <Input/Input.h>
+#include <Actor/QuadTree/QuadTreeNode.h>
 
 #include <unordered_map>
 
@@ -22,7 +23,7 @@ public:
 	bool IsBombBlock();
 
 	// 쿼드트리 판정 함수(폭탄 설치 시 실행)
-	void BombBlockByQuadTree();
+	void BombBlockByQuadTree(const Craft::Vector2 Bombposition, std::vector<std::shared_ptr<Actor>>& result);
 
 private:
 	/* 멤버함수 */
@@ -40,7 +41,8 @@ private:
 	void FrameRate(float deltaTime);
 
 	// 출력 사이즈에 맞는 액터만 가져오도록 하는 함수
-	// 벡터인 액터 리스트에 화면 크기의 액터만 담는다. -> 화면이 1 이동할 때마다 세로 한 줄을 빼고 세로 한 줄을 담는다 
+	// 벡터인 액터 리스트에 화면 크기의 액터만 담는다
+	void UpdateVisibleActors();
 
 
 
@@ -52,7 +54,7 @@ private:
 	// 카메라 이동시 
 	float cameraElapsedTime = 0.0f;
 	// 카메라를 초당 몇칸씩 움직일지..
-	float cameraSpeed = 10.0f;
+	float cameraSpeed = 5.0f;
 
 	float FPS= 0.0f;
 
@@ -61,6 +63,7 @@ private:
 	// 카메라용 소수점 보관소
 	float cameraAccumX = 0.0f;
 
+	//template<typename T>
 	std::unordered_map<int64_t, std::shared_ptr<Craft::Actor>> blockGrid;
 
 	int64_t EncodePos(int x, int y) const

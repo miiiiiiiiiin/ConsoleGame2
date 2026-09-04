@@ -3,8 +3,9 @@
 #include <Level/GameLevel.h>
 
 using namespace Craft;
-Mole::Mole(const Vector2& position) : Actor(L"P", position, Color::CYAN), timer(0.2f)
+Mole::Mole(const Vector2& position) : Actor(L"P", position, Color::CYAN), timer(0.05f)
 {
+	sortingOrder = 1;
 }
 
 void Mole::Tick(float deltaTime)
@@ -13,7 +14,7 @@ void Mole::Tick(float deltaTime)
 	timer.Tick(deltaTime);
 	if (!timer.IsTargetTime()) return;
 
-	// 플레이어 이동
+	//// 플레이어 이동
 	GetKey('W');
 	GetKey('A');
 	GetKey('S');

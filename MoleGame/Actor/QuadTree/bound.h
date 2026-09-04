@@ -6,7 +6,7 @@ class bound
 {
 public:
 	bound(Vector2 position, int width = 1, int height = 1)
-		: bounds(Vector2(0,0)), width(width), height(height)
+		: bounds(position), width(width), height(height)
 	{
 		
 	}
@@ -30,8 +30,8 @@ public:
 	// 다른 사각형이 현재 영역에 포함되는지 확인
 	bool Contains(const bound& other) const
 	{
-		return other.bounds.x >= bounds.x && other.GetXMax() < GetXMax()
-			&& other.bounds.y >= bounds.y && other.GetYMax() < GetYMax();
+		return other.bounds.x >= bounds.x && other.GetXMax() <= GetXMax()
+			&& other.bounds.y >= bounds.y && other.GetYMax() <= GetYMax();
 	}
 
 	// 다른 사각형과 겹치는지 확인하는 함수
@@ -45,7 +45,7 @@ public:
 
 private:
 	// 시작 버텍스
-	Vector2 bounds = Vector2(0, 0);
+	Vector2 bounds;
 	// 가로세로 길이
 	int width = 1;
 	int height = 1;

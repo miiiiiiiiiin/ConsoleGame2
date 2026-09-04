@@ -34,7 +34,7 @@ void BombPlacement::Tick(float deltaTime)
 			// Tick 시작.
 			
 			// 마우스 표시를 x로 설정하고 터치못하도록 ㄱㄱ
-			Destroy();
+			//Destroy();
 			// 시간 됐으면 다시 시작 
 
 		}
@@ -44,5 +44,6 @@ void BombPlacement::Tick(float deltaTime)
 	{
 		color = Color::RED;
 	}
-	position = Input::Get().GetMousePosition();
+	// 카메라 좌표 + 월드 좌표 = 현재 좌표
+	position = level->GetCameraPosition() + Input::Get().GetMousePosition();
 }

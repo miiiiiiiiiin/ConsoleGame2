@@ -23,6 +23,6 @@ private:
 		L"·"
 	};
 	int aniCount = 0;
-
+	bool isAniEnd = false;
 };
 
