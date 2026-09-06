@@ -165,6 +165,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Actor\AStar\AStar.h" />
+    <ClInclude Include="Actor\AStar\Node.h" />
     <ClInclude Include="Actor\Enemy.h" />
     <ClInclude Include="Actor\QuadTree\bound.h" />
     <ClInclude Include="Core\ActorFactory.h" />
@@ -179,6 +181,7 @@
     <ClInclude Include="Util\Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Actor\AStar\AStar.cpp" />
     <ClCompile Include="Actor\Bomb.cpp" />
     <ClCompile Include="Actor\BombPlacement.cpp" />
     <ClCompile Include="Actor\Dirt.cpp" />
