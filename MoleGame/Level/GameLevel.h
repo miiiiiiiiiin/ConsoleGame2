@@ -44,15 +44,17 @@ private:
 	// 벡터인 액터 리스트에 화면 크기의 액터만 담는다
 	void UpdateVisibleActors();
 
+	void DebugMode();
 
+	//디버그모드 토글
+	void isDeBugModeToggle();
 
 private:
 	/* 멤버변수 */
-	// 카메라 포지션
-	//Vector2 cameraPosition;
 
 	// 카메라 이동시 
 	float cameraElapsedTime = 0.0f;
+
 	// 카메라를 초당 몇칸씩 움직일지..
 	float cameraSpeed = 5.0f;
 
@@ -63,13 +65,21 @@ private:
 	// 카메라용 소수점 보관소
 	float cameraAccumX = 0.0f;
 
-	//template<typename T>
+	// 화면에 출력시킬 액터 고를때 쓰는 해시테이블(공간해싱)
 	std::unordered_map<int64_t, std::shared_ptr<Craft::Actor>> blockGrid;
-
+	// 좌표를 해싱시키는 함수..
 	int64_t EncodePos(int x, int y) const
 	{
 		return (int64_t)x * 100000 + y;
 	}
+
+	//쿼드트리 루트 노드(호출될때마다 초기화됨..)
+	std::shared_ptr<QuadTreeNode> root;
+
+	// 디버그모드
+	bool isDebugMode = false;
+
+	Craft::Vector2 BombPositionForDebug;
 
 };
 

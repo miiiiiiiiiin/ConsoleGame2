@@ -6,7 +6,7 @@ using namespace Craft;
 Bomb::Bomb(const Craft::Vector2& position)
 	: Actor(L"◉", position, Color::PURPLE), timer(0.2f)
 {
-
+	sortingOrder = 8;
 }
 
 void Bomb::Tick(float deltaTime)
@@ -19,8 +19,8 @@ void Bomb::Tick(float deltaTime)
 	 //쿼드트리 확인해서 터트릴거 터트리기.????
 
 	std::shared_ptr<GameLevel> level = Cast<GameLevel>(GetOwner());
-	std::vector<std::shared_ptr<Actor>> result;
-	level->BombBlockByQuadTree(position, result);
+	if(result.size() == 0)
+		level->BombBlockByQuadTree(position, result);
 
 	if (!isAniEnd)
 	{
@@ -32,11 +32,11 @@ void Bomb::Tick(float deltaTime)
 	}
 	else
 	{
-		for (const std::shared_ptr<Actor>& actor : result)
-		{
-			actor->Destroy();
-		}
-		Destroy();
+		//for (const std::shared_ptr<Actor>& actor : result)
+		//{
+		//	actor->Destroy();
+		//}
+		//Destroy();
 	}
 	aniCount++;
 	isAniEnd = aniCount > 2 ? true : false;

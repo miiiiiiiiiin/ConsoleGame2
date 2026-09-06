@@ -9,7 +9,7 @@ using namespace Craft;
 BombPlacement::BombPlacement(const Craft::Vector2 position)
 	: Actor(L"⮟", position, Color::BLUE), timer(0.2f)
 {
-	sortingOrder = 2;
+	sortingOrder = 7;
 }
 
 void BombPlacement::Tick(float deltaTime)
@@ -21,7 +21,8 @@ void BombPlacement::Tick(float deltaTime)
 	// gamelevel에서 bool 함수를 들고와서 비교한다..
 
 	std::shared_ptr<GameLevel> level = Cast<GameLevel>(GetOwner());
-
+	// 카메라 좌표 + 월드 좌표 = 현재 좌표
+	position = level->GetCameraPosition() + Input::Get().GetMousePosition();
 			//OutputDebugStringA("Timer ticked\n");
 	if (level->IsBombBlock())
 	{
@@ -38,12 +39,10 @@ void BombPlacement::Tick(float deltaTime)
 			// 시간 됐으면 다시 시작 
 
 		}
-		//if(Input::Get().GetKey(VK_SPACE))
 	}
 	else
 	{
 		color = Color::RED;
 	}
-	// 카메라 좌표 + 월드 좌표 = 현재 좌표
-	position = level->GetCameraPosition() + Input::Get().GetMousePosition();
+
 }

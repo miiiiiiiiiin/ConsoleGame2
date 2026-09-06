@@ -48,6 +48,9 @@
     <ClInclude Include="Actor\QuadTree\bound.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Actor\Enemy.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Level\GameLevel.cpp">
@@ -78,6 +81,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Actor\QuadTree\QuadTreeNode.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Enemy.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

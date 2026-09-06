@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <Actor/Actor.h>
 #include <Util/Timer.h>
+#include <vector>
 
 class Bomb : public Craft::Actor
 {
@@ -12,6 +13,7 @@ class Bomb : public Craft::Actor
 	//};
 	TYPE_DECLARATIONS(Bomb, Actor);
 public:
+	//virtual void BeginPlay() override;
 	Bomb(const Craft::Vector2& position);
 
 	virtual void Tick(float deltaTime) override;
@@ -24,5 +26,7 @@ private:
 	};
 	int aniCount = 0;
 	bool isAniEnd = false;
+	std::vector<std::shared_ptr<Craft::Actor>> result;
+
 };
 

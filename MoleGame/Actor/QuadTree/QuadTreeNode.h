@@ -7,7 +7,7 @@ class QuadTreeNode
 public:
 	QuadTreeNode(const bound& bounds, int capacity = 9, int depth = 0);
 	// 추가함수
-	bool Insert(std::shared_ptr<Craft::Actor>& actor);
+	bool Insert(std::shared_ptr<Craft::Actor>& actor, const Craft::Vector2 Bombposition);
 
 	// 질의함수
 	void Query(const bound& range, std::vector<std::shared_ptr<Craft::Actor>>& result) const;
@@ -15,7 +15,11 @@ public:
 	// 특정 노드 찾기
 	QuadTreeNode* FindActor(const bound& bounds);
 
+	// 디버그모드호출시 화면에 쿼드트리 그리기
+	void DrawingQuadTree(const Craft::Vector2 position);
+
 	std::vector<std::shared_ptr<Craft::Actor>>& Getactors() { return actors; }
+
 
 private:
 	// 4개로 분할하는 함수
@@ -38,4 +42,6 @@ private:
 	int depth = 2;
 	int depthCount = 0;
 
+
+	// 
 };

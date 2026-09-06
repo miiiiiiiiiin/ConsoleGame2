@@ -165,6 +165,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Actor\Enemy.h" />
     <ClInclude Include="Actor\QuadTree\bound.h" />
     <ClInclude Include="Core\ActorFactory.h" />
     <ClInclude Include="Actor\Bomb.h" />
@@ -181,6 +182,7 @@
     <ClCompile Include="Actor\Bomb.cpp" />
     <ClCompile Include="Actor\BombPlacement.cpp" />
     <ClCompile Include="Actor\Dirt.cpp" />
+    <ClCompile Include="Actor\Enemy.cpp" />
     <ClCompile Include="Actor\Mole.cpp" />
     <ClCompile Include="Actor\Wall.cpp" />
     <ClCompile Include="Game\Game.cpp" />

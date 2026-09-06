@@ -13,7 +13,6 @@ void GameLevel::OnInitialized()
 	Level::OnInitialized();
 
 	LoadMap("Map.txt");
-	//SpawnActor<BombPlacement>(Input::Get().GetMousePosition());
 
 }
 
@@ -23,6 +22,11 @@ void GameLevel::Tick(float deltaTime)
 	FPS = 1.0f / deltaTime;
 	// 카메라 이동
 	UpdateCamera(deltaTime);
+	if (Input::Get().GetKeyDown(VK_F1))
+		isDeBugModeToggle();
+
+
+
 }
 
 void GameLevel::UpdateCamera(float deltaTime)
@@ -47,16 +51,25 @@ void GameLevel::UpdateCamera(float deltaTime)
 		// 위치 업데이트
 		cameraPosition.x = CameraX;
 	}
-	UpdateVisibleActors();
+	//UpdateVisibleActors();
 	// 좌표 0부터 카메라포지션 이전값까지 액터들 다 false로 변경.
 }
 
 void GameLevel::Draw()
 {
 	Level::Draw();
+	//root.reset();
 	// 초당프레임수 확인
 	Renderer::Get().Submit(L"FPS: " + std::to_wstring(FPS), Vector2(0, 0), Color::RED);
 	UpdateVisibleActors();
+	if (isDebugMode)
+	{
+		Renderer::Get().Submit(L"Debug Mode", Vector2(20, 0), Color::GREEN);
+		//Renderer::Get().Submit(L"BombPosition", Vector2(20, 0), Color::GREEN);
+		DebugMode();
+
+	}
+
 }
 
 void GameLevel::LoadMap(const std::string& filename)
@@ -184,6 +197,18 @@ void GameLevel::UpdateVisibleActors()
 	
 }
 
+void GameLevel::DebugMode()
+{
+	if (!root) return;
+	root->DrawingQuadTree(cameraPosition);
+	//root.reset();
+}
+
+void GameLevel::isDeBugModeToggle()
+{
+	isDebugMode = !isDebugMode;
+}
+
 bool GameLevel::CanMove(const Craft::Vector2& playerPosition, const Craft::Vector2& nextPosition)
 {
 	Vector2 dir = nextPosition - playerPosition;
@@ -208,49 +233,39 @@ bool GameLevel::IsBombBlock()
 			return true;
 	}
 	return false;
-
-	//for (std::shared_ptr<Actor> actor : actorList)
-	//{
-	//	//if (actor->IsTypeOf<Wall>())
-	//	//{
-	//	//	if(Input::Get().GetMousePosition() == actor->GetPosition())
-	//	//		return false;
-	//	//}
-	//	if (actor->IsTypeOf<Dirt>())
-	//	{
-	//		if (Input::Get().GetMousePosition() == actor->GetPosition())
-	//			return true;
-	//	}
-	//}
-	//return false;
 }
 
 void GameLevel::BombBlockByQuadTree(const Vector2 Bombposition, std::vector<std::shared_ptr<Actor>>& result)
 {
+	BombPositionForDebug = Bombposition;
+	char buf[128];
+	sprintf_s(buf, "BombPosition: (%d, %d)\n", Bombposition.x, Bombposition.y);
+	OutputDebugStringA(buf);
 	Game& game = dynamic_cast<Game&>(Engine::Get());
 	int screenWidth = game.GetFrameWidth();
-	int screenHeight = game.GetFrameHeight();
+	int screenHeight = game.GetFrameHeight() - 2;
 
 	// 카메라 좌표 (루트 노드)
-	bound bounds{ cameraPosition, screenWidth, screenHeight };
-
-	QuadTreeNode root(bounds);
+	bound bounds{ Vector2(cameraPosition.x, cameraPosition.y + 2), screenWidth, screenHeight};
+	root = std::make_shared<QuadTreeNode>(bounds);
+	//QuadTreeNode root(bounds);
 	std::vector<std::shared_ptr<Actor>> nowActor;
 	// 루트에 액터 추가.(200번 추가..??)
 
-	for (int i = cameraPosition.x; i < screenWidth; i++)
+	for (int i = cameraPosition.x; i < screenWidth + cameraPosition.x; i++)
 	{
-		for (int j = cameraPosition.y; j < screenHeight; j++)
+		for (int j = cameraPosition.y + 2; j < screenHeight + cameraPosition.y + 2; j++)
 		{
 			auto it = blockGrid.find(EncodePos(i, j));
 			if (it != blockGrid.end())
 			{
 				if (it->second->IsTypeOf<Dirt>())
-					root.Insert(it->second);
+					root->Insert(it->second, Bombposition);
 			}
 		}
 	}
-	QuadTreeNode* ContainNode = root.FindActor(Bombposition);
+	QuadTreeNode* ContainNode = root->FindActor(Bombposition);
+
 	if (!ContainNode)
 	{
 		OutputDebugStringA("ContainNode is NULL\n");
@@ -258,6 +273,7 @@ void GameLevel::BombBlockByQuadTree(const Vector2 Bombposition, std::vector<std:
 	}
 	// 폭탄 위치 갖다주기
 	result = ContainNode->Getactors();
+	//Renderer::Get().Submit(L"ㅗㅗㅗ", Vector2(10,0));
 
 
 }
