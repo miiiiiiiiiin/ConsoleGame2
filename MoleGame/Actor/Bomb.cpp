@@ -32,11 +32,11 @@ void Bomb::Tick(float deltaTime)
 	}
 	else
 	{
-		//for (const std::shared_ptr<Actor>& actor : result)
-		//{
-		//	actor->Destroy();
-		//}
-		//Destroy();
+		for (const std::shared_ptr<Actor>& actor : result)
+		{
+			actor->Destroy();
+		}
+		Destroy();
 	}
 	aniCount++;
 	isAniEnd = aniCount > 2 ? true : false;
