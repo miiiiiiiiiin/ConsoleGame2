@@ -123,7 +123,8 @@ bool AStar::FindPath(const Craft::Vector2& startPosition, const Craft::Vector2& 
 }
 
 void AStar::DisplayGridWithPath(std::vector<std::pair<Craft::Vector2, int>>& grid,
-	const std::vector<Craft::Vector2> path, Craft::Vector2 cameraPosition)
+	const std::vector<Craft::Vector2> path, Craft::Vector2 cameraPosition, const Craft::Vector2 startPosition, 
+	const Craft::Vector2 goalPosition)
 {
 	// 기존에 시각화를 위해 사용했던 값 복구
 	Clearvisualization(grid);
@@ -134,7 +135,8 @@ void AStar::DisplayGridWithPath(std::vector<std::pair<Craft::Vector2, int>>& gri
 	for (const Vector2& position : path)
 	{
 		// 현재 포지션이 땅일때만 움직이기
-		Renderer::Get().Submit(L"*", position - cameraPosition, Color::GREEN);
+		if(position != startPosition || position != goalPosition)
+			Renderer::Get().Submit(L"*", position - cameraPosition, Color::GREEN);
 		auto it = std::find(grid.begin(), grid.end(), std::make_pair(position, 1));
 		if (it == grid.end()) continue;
 

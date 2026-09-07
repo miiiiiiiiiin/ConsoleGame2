@@ -9,7 +9,7 @@
 #include <Actor/Enemy.h>
 
 using namespace Craft;
-GameLevel::GameLevel() : timer(1.0f)
+GameLevel::GameLevel() : timer(1.5f)
 {
 }
 
@@ -17,7 +17,7 @@ void GameLevel::OnInitialized()
 {
 	Level::OnInitialized();
 
-	LoadMap("Map.txt");
+	LoadMap("Map2.txt");
 	ProcessAddAndDestroyActors();
 }
 
@@ -25,7 +25,7 @@ void GameLevel::Tick(float deltaTime)
 {
 	Level::Tick(deltaTime);
 	FPS = 1.0f / deltaTime;
-	if (!GameStart && StartCount != 0)
+	if (!GameStart)
 	{
 		timer.Tick(deltaTime);
 		if (timer.IsTargetTime())
@@ -61,7 +61,7 @@ void GameLevel::UpdateCamera(float deltaTime)
 	//int screenHeight = game.GetFrameHeight(); // 14
 	int screenHeight = 14; // 14
 	// 카메라 위치 이동
-	if (cameraPosition.x < 427 - screenWidth)
+	if (cameraPosition.x < 386 - screenWidth)
 	{
 		// 위치 이동(float)
 		cameraAccumX += cameraSpeed * deltaTime;
@@ -243,7 +243,7 @@ void GameLevel::UpdateVisibleActors()
 
 void GameLevel::DebugMode()
 {
-	astar->DisplayGridWithPath(grid, path, cameraPosition);
+	astar->DisplayGridWithPath(grid, path, cameraPosition, startPosition, targetPosition);
 	if (!root) return;
 	root->DrawingQuadTree(cameraPosition);
 }
@@ -269,11 +269,11 @@ std::vector<Craft::Vector2>& GameLevel::SetAstar()
 		for (int j = 0; j < screenHeight; j++)
 		{
 			auto it = blockGrid.find(EncodePos(i, j));
-			if (it != blockGrid.end())
+			if (it != blockGrid.end()) // 벽/블럭일때
 			{
 				grid.emplace_back(Vector2(i, j), 0);
 			}
-			else
+			else// 땅일떄
 				grid.emplace_back(Vector2(i, j), 1);
 		}
 	}

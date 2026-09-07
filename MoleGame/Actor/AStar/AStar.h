@@ -25,7 +25,9 @@ public:
 
 	// 탐색한 최종 경로를 그리드에 출력한다
 	void DisplayGridWithPath(std::vector<std::pair<Craft::Vector2, int>>& grid, 
-		const std::vector<Craft::Vector2> path, Craft::Vector2 cameraPosition);
+		const std::vector<Craft::Vector2> path, Craft::Vector2 cameraPosition,
+		const Craft::Vector2 startPosition,
+		const Craft::Vector2 goalPosition);
 
 private:
 	/* ------ 비공개 메소드  ------- */

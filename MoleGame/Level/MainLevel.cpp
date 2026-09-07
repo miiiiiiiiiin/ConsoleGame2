@@ -6,7 +6,8 @@
 using namespace Craft;
 void MainLevel::Draw()
 {
-	Renderer::Get().Submit(L"mole Game...", Vector2(5, 5));
+	Renderer::Get().Submit(L"Mole Game", Vector2(5, 5));
+	Renderer::Get().Submit(L"Press Enter...", Vector2(5, 8));
 
 }
 

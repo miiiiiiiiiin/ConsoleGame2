@@ -5,7 +5,7 @@
 using namespace Craft;
 Mole::Mole(const Vector2& position) : Actor(L"P", position, Color::CYAN), timer(0.05f)
 {
-	sortingOrder = 1;
+	sortingOrder = 10;
 }
 
 void Mole::Tick(float deltaTime)

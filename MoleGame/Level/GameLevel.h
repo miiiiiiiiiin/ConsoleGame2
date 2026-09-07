@@ -95,7 +95,7 @@ private:
 	Craft::Vector2 BombPositionForDebug;
 
 	// 에이스타 찾을때 전달할 그리드
-	// 0: 장애물벽. / 1: 움직일 수 있는 곳
+	// 0: 장애물벽. / 1: 움직일 수 있는 곳 // 2: 방문 노드 // 3: 시작.도착지
 	std::vector<std::pair<Vector2, int>> grid;
 
 	// 에이스타용 목표위치 시작위치
