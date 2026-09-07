@@ -6,6 +6,7 @@
 #include <Actor/Wall.h>
 #include <Actor/Dirt.h>
 #include <Actor/BombPlacement.h>
+#include <Actor/Enemy.h>
 
 using namespace Craft;
 void GameLevel::OnInitialized()
@@ -20,11 +21,15 @@ void GameLevel::Tick(float deltaTime)
 {
 	Level::Tick(deltaTime);
 	FPS = 1.0f / deltaTime;
+
 	// 카메라 이동
 	UpdateCamera(deltaTime);
 	if (Input::Get().GetKeyDown(VK_F1))
 		isDeBugModeToggle();
 
+	Game& game = dynamic_cast<Game&>(Engine::Get());
+	if (GameOver)
+		game.SetGameOverLevel();
 
 
 }
@@ -33,8 +38,10 @@ void GameLevel::UpdateCamera(float deltaTime)
 {
 	// 프레임 크기 가져오기
 	Game& game = dynamic_cast<Game&>(Engine::Get());
-	int screenWidth = game.GetFrameWidth();
-	int screenHeight = game.GetFrameHeight();
+	//int screenWidth = game.GetFrameWidth(); // 30
+	int screenWidth = 30; // 30
+	//int screenHeight = game.GetFrameHeight(); // 14
+	int screenHeight = 14; // 14
 	// 카메라 위치 이동
 	if (cameraPosition.x < 427 - screenWidth)
 	{
@@ -65,6 +72,12 @@ void GameLevel::Draw()
 	if (isDebugMode)
 	{
 		Renderer::Get().Submit(L"Debug Mode", Vector2(20, 0), Color::GREEN);
+
+		Renderer::Get().Submit(L"grid " + std::to_wstring(grid.size()), Vector2(40, 0), Color::GREEN);
+		Renderer::Get().Submit(L"Player: (" + std::to_wstring(targetPosition.x)+ L", " + std::to_wstring(targetPosition.y) + L")", Vector2(40, 2), Color::GREEN);
+		Renderer::Get().Submit(L"Enemy: (" + std::to_wstring(startPosition.x)+ L", " + std::to_wstring(startPosition.y) +L")", Vector2(40, 3), Color::GREEN);
+		Renderer::Get().Submit(L"Bomb: (" + std::to_wstring(BombPositionForDebug.x)+ L", " + std::to_wstring(BombPositionForDebug.y) +L")", Vector2(40, 5), Color::GREEN);
+
 		//Renderer::Get().Submit(L"BombPosition", Vector2(20, 0), Color::GREEN);
 		DebugMode();
 
@@ -130,6 +143,9 @@ void GameLevel::LoadMap(const std::string& filename)
 			case 'P':
 				SpawnActor<Mole>(position);
 				break;
+			case 'M':
+				SpawnActor<Enemy>(position);
+				break;
 			case 'B':
 				SpawnActor<BombPlacement>(position);
 				break;
@@ -165,10 +181,14 @@ void GameLevel::FrameRate(float deltaTime)
 void GameLevel::UpdateVisibleActors()
 {
 	//actorList.clear();
+	grid.clear();
+
 	Game& game = dynamic_cast<Game&>(Engine::Get());
-	int screenWidth = game.GetFrameWidth() + cameraPosition.x;
+	//int screenWidth = game.GetFrameWidth() + cameraPosition.x;
+	int screenWidth = 30 + cameraPosition.x;
+	//int screenHeight = game.GetFrameHeight() + cameraPosition.y;
+	int screenHeight = 13 + cameraPosition.y;
 	
-	int screenHeight = game.GetFrameHeight() + cameraPosition.y;
 	for (int i = 0; i < cameraPosition.x; i++)
 	{
 		for (int j = 0; j < screenHeight; j++)
@@ -178,6 +198,7 @@ void GameLevel::UpdateVisibleActors()
 			{
 				//actorList.pop_back(it->second);
 				it->second->SetActive(false);
+				
 			}
 		}
 	}
@@ -191,22 +212,51 @@ void GameLevel::UpdateVisibleActors()
 				//actorList.pop_back(it->second);
 				it->second->SetActive(true);
 			}
+
 		}
 	}
-
-	
+		
 }
 
 void GameLevel::DebugMode()
 {
+	astar->DisplayGridWithPath(grid, path, cameraPosition);
 	if (!root) return;
 	root->DrawingQuadTree(cameraPosition);
-	//root.reset();
 }
 
 void GameLevel::isDeBugModeToggle()
 {
 	isDebugMode = !isDebugMode;
+}
+
+std::vector<Craft::Vector2>& GameLevel::SetAstar()
+{
+	Game& game = dynamic_cast<Game&>(Engine::Get());
+	//int screenWidth = game.GetFrameWidth() + cameraPosition.x;
+	int screenWidth = 30 + cameraPosition.x;
+	//int screenHeight = game.GetFrameHeight() + cameraPosition.y;
+	int screenHeight = 14 + cameraPosition.y;
+
+	grid.clear();
+	path.clear();
+
+	for (int i = 0; i < screenWidth; i++)
+	{
+		for (int j = 0; j < screenHeight; j++)
+		{
+			auto it = blockGrid.find(EncodePos(i, j));
+			if (it != blockGrid.end())
+			{
+				grid.emplace_back(Vector2(i, j), 0);
+			}
+			else
+				grid.emplace_back(Vector2(i, j), 1);
+		}
+	}
+	astar = std::make_shared<AStar>();
+	astar->FindPath(startPosition, targetPosition, grid, path);
+	return path;
 }
 
 bool GameLevel::CanMove(const Craft::Vector2& playerPosition, const Craft::Vector2& nextPosition)
@@ -242,8 +292,8 @@ void GameLevel::BombBlockByQuadTree(const Vector2 Bombposition, std::vector<std:
 	sprintf_s(buf, "BombPosition: (%d, %d)\n", Bombposition.x, Bombposition.y);
 	OutputDebugStringA(buf);
 	Game& game = dynamic_cast<Game&>(Engine::Get());
-	int screenWidth = game.GetFrameWidth();
-	int screenHeight = game.GetFrameHeight() - 2;
+	int screenWidth = 30;
+	int screenHeight = 12;
 
 	// 카메라 좌표 (루트 노드)
 	bound bounds{ Vector2(cameraPosition.x, cameraPosition.y + 2), screenWidth, screenHeight};
@@ -273,6 +323,14 @@ void GameLevel::BombBlockByQuadTree(const Vector2 Bombposition, std::vector<std:
 	}
 	// 폭탄 위치 갖다주기
 	result = ContainNode->Getactors();
+	for (auto& actor : result)
+	{
+		auto it = blockGrid.find(EncodePos(actor->GetPosition().x, actor->GetPosition().y));
+		if (it != blockGrid.end())
+		{
+			blockGrid.erase(it);
+		}
+	}
 	//Renderer::Get().Submit(L"ㅗㅗㅗ", Vector2(10,0));
 
 

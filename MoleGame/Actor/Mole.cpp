@@ -11,6 +11,8 @@ Mole::Mole(const Vector2& position) : Actor(L"P", position, Color::CYAN), timer(
 void Mole::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
+	std::shared_ptr<GameLevel> level = Cast<GameLevel>(GetOwner());
+
 	timer.Tick(deltaTime);
 	if (!timer.IsTargetTime()) return;
 
@@ -19,6 +21,8 @@ void Mole::Tick(float deltaTime)
 	GetKey('A');
 	GetKey('S');
 	GetKey('D');
+
+	level->SetTargetPosition(position);
 
 	timer.Reset();
 

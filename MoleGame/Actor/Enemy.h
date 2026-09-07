@@ -1,5 +1,6 @@
 #pragma once
 #include <Actor/Actor.h>
+#include <Util/Timer.h>
 
 class Enemy : public Craft::Actor
 {
@@ -12,7 +13,8 @@ public:
 
 
 private:
-
+	Timer timer;
+	int count = 0;
 
 };
 

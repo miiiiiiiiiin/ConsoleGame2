@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Node.h"
 #include <vector>
 
@@ -20,11 +20,12 @@ public:
 	// 시작위치 - 목표위치 경로 탐색
 	bool FindPath(const Craft::Vector2& startPosition,
 		const Craft::Vector2& goalPosition,
-		std::vector<std::vector<int>>& grid,
+		std::vector<std::pair<Craft::Vector2, int>>& grid,
 		std::vector<Craft::Vector2>& findPosition);
 
 	// 탐색한 최종 경로를 그리드에 출력한다
-	void DisplayGridWithPath(const std::vector<Craft::Vector2> findPosition);
+	void DisplayGridWithPath(std::vector<std::pair<Craft::Vector2, int>>& grid, 
+		const std::vector<Craft::Vector2> path, Craft::Vector2 cameraPosition);
 
 private:
 	/* ------ 비공개 메소드  ------- */
@@ -43,7 +44,7 @@ private:
 
 	// 그리드와 좌표가 유효한지 확인
 	//bool IsValidGrid(const std::vector)
-	bool IsInRange(int x, int y);
+	bool IsInRange(int x, int y, std::vector<std::pair<Craft::Vector2, int>>& grid);
 
 	// 대각선 이동시 장애물 모서리 통과하는지 확인(대각선이동안함)
 	//bool IsDiagonalBlocked(const )
@@ -51,11 +52,11 @@ private:
 	// open목록 closed목록 검사
 	Node* FindOpenNode(int x, int y) const;
 	bool IsInClosedList(int x, int y) const;
-	bool InDestination(const Node* node) const;
+	bool IsDestination(const Node* node) const;
 
 	// 이전 탐색 표시 지우고 그리드 출력
-	void Clearvisualization() const;
-	void DisplayGrid() const;
+	void Clearvisualization(std::vector<std::pair<Craft::Vector2, int>>& grid) const;
+	void DisplayGrid(const std::vector<std::pair<Craft::Vector2, int>>& grid) const;
 
 
 
@@ -67,8 +68,8 @@ private:
 	std::vector<Node*> openList;
 	std::vector<Node*> closedList;
 
-	Node* startNode;
-	Node* goalNode;
+	Node* startNode = nullptr;
+	Node* goalNode = nullptr;
 
 };
 

@@ -3,6 +3,7 @@
 #include <Math/Vector2.h>
 #include <Input/Input.h>
 #include <Actor/QuadTree/QuadTreeNode.h>
+#include <Actor/AStar/AStar.h>
 
 #include <unordered_map>
 
@@ -25,6 +26,15 @@ public:
 	// 쿼드트리 판정 함수(폭탄 설치 시 실행)
 	void BombBlockByQuadTree(const Craft::Vector2 Bombposition, std::vector<std::shared_ptr<Actor>>& result);
 
+	// 에이스타 그리드 만들어서 경로 제작.
+	// 디버그모드 그리기는 따로.
+	std::vector<Craft::Vector2>& SetAstar();
+
+	void SetStartPosition(Craft::Vector2 position) { startPosition = position; }
+	void SetTargetPosition(Craft::Vector2 position) { targetPosition = position; }
+
+	// 겜오버시 트리거 바꾸기
+	void SetGameOver(bool gameOver) { GameOver = gameOver; }
 private:
 	/* 멤버함수 */
 
@@ -49,6 +59,8 @@ private:
 	//디버그모드 토글
 	void isDeBugModeToggle();
 
+
+
 private:
 	/* 멤버변수 */
 
@@ -70,7 +82,7 @@ private:
 	// 좌표를 해싱시키는 함수..
 	int64_t EncodePos(int x, int y) const
 	{
-		return (int64_t)x * 100000 + y;
+		return (int64_t)x * 31 + y;
 	}
 
 	//쿼드트리 루트 노드(호출될때마다 초기화됨..)
@@ -81,5 +93,18 @@ private:
 
 	Craft::Vector2 BombPositionForDebug;
 
+	// 에이스타 찾을때 전달할 그리드
+	// 0: 장애물벽. / 1: 움직일 수 있는 곳
+	std::vector<std::pair<Vector2, int>> grid;
+
+	// 에이스타용 목표위치 시작위치
+	Craft::Vector2 startPosition;
+	Craft::Vector2 targetPosition;
+
+	std::shared_ptr<AStar> astar;
+	std::vector<Craft::Vector2> path;
+
+	// 겜오버 트리거
+	bool GameOver = false;
 };
 

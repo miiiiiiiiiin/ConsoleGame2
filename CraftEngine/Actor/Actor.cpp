@@ -38,7 +38,7 @@ namespace Craft
 		{
 			newPosition = position - level->GetCameraPosition();
 		}
-		if (newPosition.x < 0 || newPosition.x >= Engine::Get().GetWidth()
+		if (newPosition.x < 0 || newPosition.x >= 30
 			|| newPosition.y < 0 || newPosition.y >= Engine::Get().GetHeight())
 			return;
 		//렌더러에 필요한 데이터 제출

@@ -9,7 +9,7 @@ public:
 	{
 	}
 
-private:
+public:
 	Craft::Vector2 position;
 	float gCost = 0;
 	float hCost = 0;

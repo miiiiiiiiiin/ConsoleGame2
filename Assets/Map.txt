@@ -1,14 +1,12 @@
 #############################################################################################################################################################################################################################################################################################################################################################################################################
-            DDDDDDDDDDDDD        DDDDDDDDDDDDD 
-DDDDDD             DDDDDDDDDDDDDDDD         DDDDDDDDD###
-              DDDDDDDDDDDDDDDDDD###
-              DDDDDDDDDDDDDDDDDD#######
-
-
-
-
-       P       
-              DDDDDDDDDDDDDDDDDDDDDDDDDDDDD###
+                                                     DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD        DDDDDDDDDDDDD 
+DDDDDD                                               DDDDDDDD       DDDD##DDDDDDDDDDDD      DDDDDDDDD###
+                                                     DDDDDDDDDDDDDDDDDD###DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+                                                     DDDDDDDDDDDDDDDDDD#######DDDDDDDDDDDDD
+    P                                                DDDDDDDDD#DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+                                                     DD#DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+                                                     DDDDDDDDDDDDDDDDDD#DDDDDDDDDDDDDDDDD           
+                                                     DDDDDDDDDDDDDDDDDDDDDDDDDDDDD###
 #####################################################################################################################################################################################################################################################################################################################################################################################################################
 
 B
