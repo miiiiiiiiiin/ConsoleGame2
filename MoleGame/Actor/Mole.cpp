@@ -23,6 +23,12 @@ void Mole::Tick(float deltaTime)
 	GetKey('D');
 
 	level->SetTargetPosition(position);
+	// 플레이어가 오른쪽 벽 넘으면 막고, 왼쪽으로 밀리면 겜 오버.
+	if (position.x >= level->GetCameraPosition().x + 30)
+		position.x = level->GetCameraPosition().x + 30;
+	else if(position.x <= level->GetCameraPosition().x)
+		level->SetGameOver(true);
+
 
 	timer.Reset();
 

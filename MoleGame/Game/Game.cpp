@@ -11,7 +11,7 @@ Game::Game()
 	levelList.emplace_back(std::make_shared<GameLevel>());
 	levelList.emplace_back(std::make_shared<GameOverLevel>());
 	levelList.emplace_back(std::make_shared<GameClearLevel>());
-	state = State::GameLevel;
+	state = State::mainLevel;
 
 	mainLevel = levelList[static_cast<int>(state)];
 	//AddNewLevel<GameLevel>();
@@ -20,5 +20,23 @@ Game::Game()
 void Game::SetGameOverLevel()
 { // 겜오버로 ㄱㄱ
 	state = State::GameOverLevel;
+	mainLevel = levelList[static_cast<int>(state)];
+}
+
+void Game::SetGameLevel()
+{ // 갬화면
+	state = State::GameLevel;
+	AddNewLevel<GameLevel>(); // 일케해야 초기화 된다.
+}
+
+void Game::SetGameClearLevel()
+{ // 갬성공
+	state = State::GameClearLevel;
+	mainLevel = levelList[static_cast<int>(state)];
+}
+
+void Game::SetMainLevel()
+{ // 갬 메인화면
+	state = State::mainLevel;
 	mainLevel = levelList[static_cast<int>(state)];
 }

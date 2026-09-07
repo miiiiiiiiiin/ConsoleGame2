@@ -9,18 +9,34 @@
 #include <Actor/Enemy.h>
 
 using namespace Craft;
+GameLevel::GameLevel() : timer(1.0f)
+{
+}
+
 void GameLevel::OnInitialized()
 {
 	Level::OnInitialized();
 
 	LoadMap("Map.txt");
-
+	ProcessAddAndDestroyActors();
 }
 
 void GameLevel::Tick(float deltaTime)
 {
 	Level::Tick(deltaTime);
 	FPS = 1.0f / deltaTime;
+	if (!GameStart && StartCount != 0)
+	{
+		timer.Tick(deltaTime);
+		if (timer.IsTargetTime())
+		{
+			if (StartCount == 0)
+				GameStart = true;
+			else
+				StartCount--;
+		}
+		else return;
+	}
 
 	// 카메라 이동
 	UpdateCamera(deltaTime);
@@ -33,6 +49,8 @@ void GameLevel::Tick(float deltaTime)
 
 
 }
+
+
 
 void GameLevel::UpdateCamera(float deltaTime)
 {
@@ -67,6 +85,11 @@ void GameLevel::Draw()
 	Level::Draw();
 	//root.reset();
 	// 초당프레임수 확인
+	if (!GameStart)
+	{
+		Renderer::Get().Submit(std::to_wstring(StartCount), Vector2(0, 0), Color::RED);
+		return;
+	}
 	Renderer::Get().Submit(L"FPS: " + std::to_wstring(FPS), Vector2(0, 0), Color::RED);
 	UpdateVisibleActors();
 	if (isDebugMode)

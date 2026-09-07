@@ -3,7 +3,7 @@
 #include <Actor/Mole.h>
 using namespace Craft;
 Enemy::Enemy(const Craft::Vector2 position)
-	: Actor(L"E", position, Color::RED), timer(0.1f)
+	: Actor(L"E", position, Color::RED), timer(0.2f)
 {
 }
 

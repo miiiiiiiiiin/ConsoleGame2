@@ -9,6 +9,7 @@ public:
 private:
 	virtual void Tick(float deltaTime) override;
 	virtual void OnInitialized() override;
+	virtual void Draw() override;
 
 
 };

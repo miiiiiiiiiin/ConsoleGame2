@@ -4,6 +4,7 @@
 class GameClearLevel : public Craft::Level
 {
 public:
+	virtual void Draw() override;
 
 private:
 

@@ -4,7 +4,7 @@
 #include <Input/Input.h>
 #include <Actor/QuadTree/QuadTreeNode.h>
 #include <Actor/AStar/AStar.h>
-
+#include <Util/Timer.h>
 #include <unordered_map>
 
 class GameLevel : public Craft::Level
@@ -12,6 +12,7 @@ class GameLevel : public Craft::Level
 	TYPE_DECLARATIONS(GameLevel, Level)
 
 public:
+	GameLevel();
 	//Vector2 GetCameraPosition() const { return cameraPosition; }
 
 	// 카메라 좌표 변경 함수
@@ -68,7 +69,7 @@ private:
 	float cameraElapsedTime = 0.0f;
 
 	// 카메라를 초당 몇칸씩 움직일지..
-	float cameraSpeed = 5.0f;
+	float cameraSpeed = 3.0f;
 
 	float FPS= 0.0f;
 
@@ -106,5 +107,11 @@ private:
 
 	// 겜오버 트리거
 	bool GameOver = false;
+
+	// 겜 시작 전 트리거
+	bool GameStart = false;
+	int StartCount = 3;
+
+	Timer timer;
 };
 

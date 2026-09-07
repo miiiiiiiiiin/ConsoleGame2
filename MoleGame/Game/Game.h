@@ -23,9 +23,12 @@ public:
 
 	// 게임-> 게임오버
 	void SetGameOverLevel();
+	void SetGameLevel();
+	void SetGameClearLevel();
+	void SetMainLevel();
 private:
 	// 레벨 리스트
-	std::vector<std::shared_ptr<Level>> levelList;
+	std::vector<std::shared_ptr<Craft::Level>> levelList;
 
 	State state;
 
