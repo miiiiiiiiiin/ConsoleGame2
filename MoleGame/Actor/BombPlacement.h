@@ -18,10 +18,9 @@ class BombPlacement : public Craft::Actor
 public:
 	BombPlacement(const Craft::Vector2 position);
 
-	virtual void Tick(float deltaTime) override;
 private:
+	virtual void Tick(float deltaTime) override;
 	// 키 눌림 이동
-	void GetKey(int keyCode);
 
 private:
 	Timer timer;

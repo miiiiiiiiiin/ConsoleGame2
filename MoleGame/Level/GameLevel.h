@@ -13,7 +13,6 @@ class GameLevel : public Craft::Level
 
 public:
 	GameLevel();
-	//Vector2 GetCameraPosition() const { return cameraPosition; }
 
 	// 카메라 좌표 변경 함수
 	void UpdateCamera(float deltaTime);
@@ -36,6 +35,10 @@ public:
 
 	// 겜오버시 트리거 바꾸기
 	void SetGameOver(bool gameOver) { GameOver = gameOver; }
+	void SetGameClear(bool gameclear) { GameClear = gameclear; }
+
+	// 몬스터 이동 시작
+	void SetEnemydepart(bool depart) { isEnemydepart = depart; }
 private:
 	/* 멤버함수 */
 
@@ -60,21 +63,21 @@ private:
 	//디버그모드 토글
 	void isDeBugModeToggle();
 
-
+	// 미니맵 위치 변경
+	void minimapVecChange();
 
 private:
 	/* 멤버변수 */
-
-	// 카메라 이동시 
+	
 	float cameraElapsedTime = 0.0f;
 
 	// 카메라를 초당 몇칸씩 움직일지..
-	float cameraSpeed = 3.0f;
+	float cameraSpeed = 3.5f; 
 
 	float FPS= 0.0f;
 
 	// 레알 정수형 카메라 위치
-	int CameraX = 0.0f;
+	int CameraX = 0;
 	// 카메라용 소수점 보관소
 	float cameraAccumX = 0.0f;
 
@@ -107,11 +110,23 @@ private:
 
 	// 겜오버 트리거
 	bool GameOver = false;
+	// 겜클리어 트리거
+	bool GameClear = false;
 
 	// 겜 시작 전 트리거
 	bool GameStart = false;
 	int StartCount = 3;
 
 	Timer timer;
+
+	// 
+	bool isEnemydepart = false;
+	Timer EnemyTimer;
+
+	// 미니맵 위치용
+	Vector2 nowDir = Vector2(2, 11);
+
+	// 미니맵 두더지 위치 비교용
+	Vector2 changeTargetPos = Vector2(0,0);
 };
 

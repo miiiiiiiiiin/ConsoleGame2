@@ -1,9 +1,10 @@
 ﻿#include "Mole.h"
 #include <Input/Input.h>
 #include <Level/GameLevel.h>
+#include <Actor/Goal.h>
 
 using namespace Craft;
-Mole::Mole(const Vector2& position) : Actor(L"P", position, Color::CYAN), timer(0.05f)
+Mole::Mole(const Vector2& position) : Actor(L"P", position, Color::YELLOW), timer(0.05f)
 {
 	sortingOrder = 10;
 }
@@ -29,9 +30,12 @@ void Mole::Tick(float deltaTime)
 	else if(position.x <= level->GetCameraPosition().x)
 		level->SetGameOver(true);
 
+	if (level->FindActorAt<Goal>(position + Vector2(1,0)))
+	{
+		level->SetGameClear(true);
+	}
 
 	timer.Reset();
-
 }
 
 void Mole::GetKey(int keyCode)

@@ -32,12 +32,6 @@ void BombPlacement::Tick(float deltaTime)
 		{
 			// Bomb클래스 spawnActor호출
 			level->SpawnActor<Bomb>(position);
-			// Tick 시작.
-			
-			// 마우스 표시를 x로 설정하고 터치못하도록 ㄱㄱ
-			//Destroy();
-			// 시간 됐으면 다시 시작 
-
 		}
 	}
 	else

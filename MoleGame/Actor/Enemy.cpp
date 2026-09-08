@@ -3,20 +3,33 @@
 #include <Actor/Mole.h>
 using namespace Craft;
 Enemy::Enemy(const Craft::Vector2 position)
-	: Actor(L"E", position, Color::RED), timer(0.2f)
+	: Actor(L"E", position, Color::RED), timer(0.2f), StartTimer(9.0f) 
 {
 }
 
 void Enemy::Tick(float deltaTime)
 {
 	super::Tick(deltaTime);
+	StartTimer.Tick(deltaTime);
+	if (!StartTimer.IsTargetTime())
+	{
+		//isActive = false;
+		image = L" ";
+		return;
+	}
+	std::shared_ptr<GameLevel> level = Cast<GameLevel>(GetOwner());
+	level->SetEnemydepart(true);
+	image = L"E";
 	timer.Tick(deltaTime);
 	if (!timer.IsTargetTime()) return;
 	count = 1;
-	std::shared_ptr<GameLevel> level = Cast<GameLevel>(GetOwner());
+	// 에이스타 시작점
 	level->SetStartPosition(position);
+	// 에이스타 시작-> 길 찾은 경로를 반환한다
 	std::vector<Craft::Vector2> result = level->SetAstar();
+
 	if (result.size() < count) return;
+	// 위치 변경
 	position = result[count++];
 	// 충돌 처리.
 	if (level->FindActorAt<Mole>(position))

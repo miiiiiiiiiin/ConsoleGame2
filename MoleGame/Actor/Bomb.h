@@ -16,7 +16,9 @@ public:
 	//virtual void BeginPlay() override;
 	Bomb(const Craft::Vector2& position);
 
+private:
 	virtual void Tick(float deltaTime) override;
+
 private:
 	Timer timer;
 	const wchar_t* animation[3]{

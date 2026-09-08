@@ -136,7 +136,7 @@ void AStar::DisplayGridWithPath(std::vector<std::pair<Craft::Vector2, int>>& gri
 	{
 		// 현재 포지션이 땅일때만 움직이기
 		if(position != startPosition || position != goalPosition)
-			Renderer::Get().Submit(L"*", position - cameraPosition, Color::GREEN);
+			Renderer::Get().Submit(L"*", position - cameraPosition, Color::PURPLE, 7);
 		auto it = std::find(grid.begin(), grid.end(), std::make_pair(position, 1));
 		if (it == grid.end()) continue;
 

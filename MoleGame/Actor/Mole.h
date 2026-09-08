@@ -16,15 +16,14 @@ class Mole : public Craft::Actor
 {
 	TYPE_DECLARATIONS(Mole, Actor);
 public:
-
 	Mole(const Vector2& position);
 
+private:
 	// 이동 로직..
 	virtual void Tick(float deltaTime) override;
 
 	// 키 눌림 이동
 	void GetKey(int keyCode);
-
 
 private:
 	Timer timer;
