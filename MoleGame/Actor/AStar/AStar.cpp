@@ -1,10 +1,13 @@
 ﻿#include "AStar.h"
 #include <algorithm>
 #include <iostream>
+#include <cstdint>
+
 #define NOMINMAX
 //#include <Windows.h>
 
 using namespace Craft;
+
 AStar::AStar()
 {
 }
@@ -14,25 +17,21 @@ AStar::~AStar()
 	Clear();
 }
 
-bool AStar::FindPath(const Craft::Vector2& startPosition, const Craft::Vector2& goalPosition, std::vector<std::pair<Craft::Vector2, int>>& grid, std::vector<Craft::Vector2>& findPosition)
+bool AStar::FindPath(
+	const Craft::Vector2& startPosition,
+	const Craft::Vector2& goalPosition,
+	std::unordered_map<int64_t, int>& grid,
+	std::vector<Craft::Vector2>& findPosition)
 {
 	Clear();
+	findPosition.clear();
 
-	//if(!IsValidGrid(grid))
-	// 잘못된 좌표는 탐색하지 않는다.
+	// 시작 / 목표 위치가 맵에 존재하고 이동 가능한지 확인
 	if (!IsInRange(startPosition.x, startPosition.y, grid)
 		|| !IsInRange(goalPosition.x, goalPosition.y, grid))
+	{
 		return false;
-
-	// 시작/목표위치가 이동가능하지 않다면(벽 / 블럭) 리턴
-	// 게임레벨에서 모두 검사한 노드만 가져가기??
-	// 겜레벨에서 에이스타 호출시 해시맵도 전달하기
-	auto it1 = std::find(grid.begin(), grid.end(), std::make_pair(startPosition, 0));
-	if (it1 != grid.end())
-		return false;
-	auto it2 = std::find(grid.begin(), grid.end(), std::make_pair(goalPosition, 0));
-	if (it2 != grid.end())
-		return false;
+	}
 
 	// 이전 탐색 과정의 시각화 값 제거
 	Clearvisualization(grid);
@@ -41,113 +40,170 @@ bool AStar::FindPath(const Craft::Vector2& startPosition, const Craft::Vector2& 
 	goalNode = CreateNode(goalPosition);
 
 	startNode->gCost = 0.0f;
-	startNode->hCost = CalculateHeuristic(startPosition, goalPosition);
-	startNode->fCost = startNode->gCost + startNode->hCost;
+	startNode->hCost = CalculateHeuristic(
+		startPosition,
+		goalPosition);
+
+	startNode->fCost =
+		startNode->gCost + startNode->hCost;
 
 	openList.emplace_back(startNode);
 
-	// 사전 비용 설정
+	// 상 / 하 / 좌 / 우
 	const std::vector<Direction> directions =
 	{
-		{0, -1, 1.0f}, { 0, 1, 1.0f }, // 상 하 
-		{-1, 0, 1.0f}, { 1, 0, 1.0f }, // 좌 우 
+		{ 0, -1, 1.0f },
+		{ 0,  1, 1.0f },
+		{-1,  0, 1.0f },
+		{ 1,  0, 1.0f },
 	};
 
-	// openList가 빌 때까지 비용 작은 노드 구하기
+	// OpenList가 빌 때까지 탐색
 	while (!openList.empty())
 	{
+		// FCost가 가장 작은 노드 찾기
 		Node* currentNode = openList[0];
+
 		for (Node* node : openList)
-		{// 비용이 젤 싼 노드를 currentNode에 담기
+		{
 			if (node->fCost < currentNode->fCost
 				|| (node->fCost == currentNode->fCost
 					&& node->hCost < currentNode->hCost))
+			{
 				currentNode = node;
+			}
 		}
+
+		// 목적지 도착
 		if (IsDestination(currentNode))
 		{
-			// 반환은 bool 이고 최종경로는 findPosition에 담긴다.(겜레벨에서 변수만들어야함)
-			return ConstructPath(currentNode, findPosition);
+			return ConstructPath(
+				currentNode,
+				findPosition);
 		}
-		// 다 찾았으면 오픈목록에서 지우고 클로즈목록으로 ㄱㄱ
-		auto it3 = std::find(openList.begin(), openList.end(), currentNode);
-		if (it3 != openList.end())
-			openList.erase(it3);
 
+		// OpenList에서 제거
+		auto openIt = std::find(
+			openList.begin(),
+			openList.end(),
+			currentNode);
+
+		if (openIt != openList.end())
+		{
+			openList.erase(openIt);
+		}
+
+		// ClosedList에 추가
 		closedList.emplace_back(currentNode);
 
-		// 현재 위치를 기준으로 주위 방향(4) 검색
+		// 현재 위치 기준 4방향 탐색
 		for (const Direction& direction : directions)
 		{
-			// 인접한 노드 좌표 계산
-			int newX = currentNode->position.x + direction.x;
-			int newY = currentNode->position.y + direction.y;
+			int newX =
+				currentNode->position.x + direction.x;
 
+			int newY =
+				currentNode->position.y + direction.y;
+
+			// 맵에 존재하지 않거나 이동할 수 없는 위치
 			if (!IsInRange(newX, newY, grid))
 				continue;
-			// 이미 방문한 곳이라면건너뛰기(클로즈드리스트)
+
+			// 이미 방문한 노드라면 건너뜀
 			if (IsInClosedList(newX, newY))
 				continue;
 
-			float newgCost = currentNode->gCost + direction.cost;
-			// 새로 찾은 위치가 이미 오픈리스트에있다면 비용 확인 후 변경.
-			Node* openNode = FindOpenNode(newX, newY);
+			// 새로운 GCost
+			float newgCost =
+				currentNode->gCost + direction.cost;
+
+			// OpenList에 이미 존재하는지 확인
+			Node* openNode =
+				FindOpenNode(newX, newY);
+
 			if (openNode)
 			{
+				// 더 짧은 경로를 발견했다면 갱신
 				if (newgCost < openNode->gCost)
 				{
 					openNode->gCost = newgCost;
-					openNode->fCost = openNode->gCost + openNode->hCost;
+
+					openNode->fCost =
+						openNode->gCost +
+						openNode->hCost;
+
 					openNode->parentNode = currentNode;
 				}
+
 				continue;
 			}
 
-			Node* neighborNode = CreateNode(Vector2(newX, newY), currentNode);
+			// 새로운 노드 생성
+			Node* neighborNode =
+				CreateNode(
+					Vector2(newX, newY),
+					currentNode);
 
 			neighborNode->gCost = newgCost;
-			neighborNode->hCost = CalculateHeuristic(neighborNode->position, goalNode->position);
-			neighborNode->fCost = neighborNode->gCost + neighborNode->hCost;
+
+			neighborNode->hCost =
+				CalculateHeuristic(
+					neighborNode->position,
+					goalNode->position);
+
+			neighborNode->fCost =
+				neighborNode->gCost +
+				neighborNode->hCost;
 
 			openList.emplace_back(neighborNode);
-			auto it4 = std::find(grid.begin(), grid.end(), std::make_pair(Vector2(newX, newY), 1));
-			if (it4 != grid.end())
-			{
-				it4->second = 2; // 2: 방문o
-			}
 
-			//DisplayGrid(grid);
+			// 방문 표시
+			auto gridIt =
+				grid.find(EncodePos(newX, newY));
+
+			if (gridIt != grid.end())
+			{
+				// 2 = 방문함
+				gridIt->second = 2;
+			}
 		}
 	}
+
 	return false;
 }
 
-void AStar::DisplayGridWithPath(std::vector<std::pair<Craft::Vector2, int>>& grid,
-	const std::vector<Craft::Vector2> path, Craft::Vector2 cameraPosition, const Craft::Vector2 startPosition, 
+void AStar::DisplayGridWithPath(
+	std::unordered_map<int64_t, int>& grid,
+	const std::vector<Craft::Vector2> path,
+	Craft::Vector2 cameraPosition,
+	const Craft::Vector2 startPosition,
 	const Craft::Vector2 goalPosition)
 {
-	// 기존에 시각화를 위해 사용했던 값 복구
+	// 기존 탐색 시각화 값 복구
 	Clearvisualization(grid);
 
-	// 맵 그리기(?)
-	DisplayGrid(grid);
-
+	// 경로 그리기
 	for (const Vector2& position : path)
 	{
-		// 현재 포지션이 땅일때만 움직이기
-		if(position != startPosition || position != goalPosition)
-			Renderer::Get().Submit(L"*", position - cameraPosition, Color::PURPLE, 7);
-		auto it = std::find(grid.begin(), grid.end(), std::make_pair(position, 1));
-		if (it == grid.end()) continue;
-
+		// 시작점과 목표점은 제외
+		if (position != startPosition
+			&& position != goalPosition)
+		{
+			Renderer::Get().Submit(
+				L"*",
+				position - cameraPosition,
+				Color::PURPLE,
+				7);
+		}
 	}
-
 }
 
 void AStar::Clear()
 {
 	for (Node* node : allocatedNodes)
+	{
 		delete node;
+	}
 
 	allocatedNodes.clear();
 	openList.clear();
@@ -157,101 +213,132 @@ void AStar::Clear()
 	goalNode = nullptr;
 }
 
-Node* AStar::CreateNode(const Craft::Vector2& position, Node* parentNode)
+Node* AStar::CreateNode(
+	const Craft::Vector2& position,
+	Node* parentNode)
 {
-	Node* node = new Node(position, parentNode);
+	Node* node =
+		new Node(position, parentNode);
+
 	allocatedNodes.emplace_back(node);
-	
+
 	return node;
 }
 
-bool AStar::ConstructPath(Node* detinationNode, std::vector<Craft::Vector2>& findPosition)
+bool AStar::ConstructPath(
+	Node* detinationNode,
+	std::vector<Craft::Vector2>& findPosition)
 {
-	if (!detinationNode) return false;
+	if (!detinationNode)
+		return false;
 
-	// 목표 노드로부터 부모 노드를 따라 경로 역추적
+	// 기존 경로가 있다면 제거
+	findPosition.clear();
+
+	// 목표 노드부터 부모 노드를 따라 역추적
 	Node* current = detinationNode;
 
 	while (current)
 	{
-		// 현재 노드는 경로배열에 추가
-		findPosition.emplace_back(current->position);
+		findPosition.emplace_back(
+			current->position);
 
-		// 부모 노드로 이동해서 역추적
 		current = current->parentNode;
 	}
-	// 루프가 종료되면 path에는 반대방향의 경로 정보 저장되므로 뒤집기
-	std::reverse(findPosition.begin(), findPosition.end());
+
+	// 역순으로 저장됐으므로 뒤집기
+	std::reverse(
+		findPosition.begin(),
+		findPosition.end());
 
 	return true;
 }
 
-float AStar::CalculateHeuristic(const Craft::Vector2& currentPosition, const Craft::Vector2& goalPosition) const
+float AStar::CalculateHeuristic(
+	const Craft::Vector2& currentPosition,
+	const Craft::Vector2& goalPosition) const
 {
-	// 현재위치 - 목표위치 절댓값 
-	int diffX = std::abs(currentPosition.x - goalPosition.x);
-	int diffY = std::abs(currentPosition.y - goalPosition.y);
+	int diffX =
+		std::abs(
+			currentPosition.x -
+			goalPosition.x);
 
-	// 남은 직선 거리 
-	int straightDistance = (diffX < diffY) ? diffY : diffX;
+	int diffY =
+		std::abs(
+			currentPosition.y -
+			goalPosition.y);
+
+	// 상하좌우 이동이므로 Manhattan Distance 사용
+	int straightDistance =
+		diffX + diffY;
 
 	const float straightCost = 1.0f;
 
 	return straightDistance * straightCost;
 }
 
-bool AStar::IsInRange(int x, int y, std::vector<std::pair<Craft::Vector2, int>>& grid)
+bool AStar::IsInRange(
+	int x,
+	int y,
+	std::unordered_map<int64_t, int>& grid)
 {
-	auto it = std::find(grid.begin(), grid.end(), std::make_pair(Vector2(x, y), 1));
-	if (it != grid.end()) return true;
-	else return false;
+	auto it =
+		grid.find(EncodePos(x, y));
+
+	// key가 존재하고
+	// value가 0이 아니면 이동 가능
+	return it != grid.end()
+		&& it->second != 0;
 }
 
-Node* AStar::FindOpenNode(int x, int y) const
+Node* AStar::FindOpenNode(
+	int x,
+	int y) const
 {
 	for (Node* node : openList)
 	{
 		if (node->position == Vector2(x, y))
+		{
 			return node;
+		}
 	}
+
 	return nullptr;
 }
 
-bool AStar::IsInClosedList(int x, int y) const
+bool AStar::IsInClosedList(
+	int x,
+	int y) const
 {
 	for (Node* node : closedList)
 	{
 		if (node->position == Vector2(x, y))
+		{
 			return true;
+		}
 	}
+
 	return false;
 }
 
-bool AStar::IsDestination(const Node* node) const
+bool AStar::IsDestination(
+	const Node* node) const
 {
-	// 비교 노드 다 null아니고 좌표같을떄
-	return node && goalNode && node->position == goalNode->position;
+	return node
+		&& goalNode
+		&& node->position == goalNode->position;
 }
 
-void AStar::Clearvisualization(std::vector<std::pair<Craft::Vector2, int>>& grid) const
+void AStar::Clearvisualization(
+	std::unordered_map<int64_t, int>& grid) const
 {
-	for (int i = 0; i < grid.size(); i++)
+	for (auto& [key, value] : grid)
 	{
-		if (grid[i].second == 2)
+		if (value == 2)
 		{
-			grid[i].second = 1;
+			// 2 = 방문함
+			// 1 = 이동 가능
+			value = 1;
 		}
-	}
-}
-
-void AStar::DisplayGrid(const std::vector<std::pair<Craft::Vector2, int>>& grid) const
-{// 몬스터의 좌표: 시작점, 플레이어 좌표: 목표지점. 
-	// 
-	for (int i = 0; i < (int)grid.size(); i++)
-	{
-		if (grid[i].second == 0)
-			continue;
-		else if(grid[i].second == 2)
-			Renderer::Get().Submit(L"+", grid[i].first, Color::PURPLE);
 	}
 }

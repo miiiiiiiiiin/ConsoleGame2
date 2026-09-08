@@ -18,7 +18,7 @@ void GameLevel::OnInitialized()
 {
 	Level::OnInitialized();
 
-	LoadMap("Map2.txt");
+	LoadMap("test.txt");
 	//SpawnActor<Enemy>(Vector2(0,0));
 	ProcessAddAndDestroyActors();
 }
@@ -49,7 +49,7 @@ void GameLevel::Tick(float deltaTime)
 		}
 	}
 	// 카메라 이동
-	UpdateCamera(deltaTime);
+	//UpdateCamera(deltaTime);
 	if (Input::Get().GetKeyDown(VK_F1))
 		isDeBugModeToggle();
 
@@ -229,39 +229,29 @@ void GameLevel::FrameRate(float deltaTime)
 
 void GameLevel::UpdateVisibleActors()
 {
-	//actorList.clear();
-	grid.clear();
-
 	Game& game = dynamic_cast<Game&>(Engine::Get());
 	//int screenWidth = game.GetFrameWidth() + cameraPosition.x;
 	int screenWidth = 30 + cameraPosition.x;
 	//int screenHeight = game.GetFrameHeight() + cameraPosition.y;
 	int screenHeight = 12 + cameraPosition.y;
-	
+	// 카메라 이전 액터 = false
 	for (int i = 0; i < cameraPosition.x; i++)
 	{
 		for (int j = 0; j < screenHeight; j++)
 		{
 			auto it = blockGrid.find(EncodePos(i, j));
 			if (it != blockGrid.end())
-			{
-				//actorList.pop_back(it->second);
 				it->second->SetActive(false);
-				
-			}
 		}
 	}
+	// 카메라 안 액터 = true
 	for (int i = cameraPosition.x; i < screenWidth; i++)
 	{
 		for (int j = cameraPosition.y; j < screenHeight; j++)
 		{
 			auto it = blockGrid.find(EncodePos(i, j));
 			if (it != blockGrid.end())
-			{
-				//actorList.pop_back(it->second);
 				it->second->SetActive(true);
-			}
-
 		}
 	}
 		
@@ -298,29 +288,26 @@ void GameLevel::minimapVecChange()
 std::vector<Craft::Vector2>& GameLevel::SetAstar()
 {
 	Game& game = dynamic_cast<Game&>(Engine::Get());
-	//int screenWidth = game.GetFrameWidth() + cameraPosition.x;
 	int screenWidth = 30 + cameraPosition.x;
-	//int screenHeight = game.GetFrameHeight() + cameraPosition.y;
 	int screenHeight = 14 + cameraPosition.y;
 
 	grid.clear();
 	path.clear();
+
 	if (startPosition.x < targetPosition.x || 
 		(startPosition.x == targetPosition.x && startPosition.y < targetPosition.y))
 	{
 		for (int i = startPosition.x; i < screenWidth; i++)
+		{
+			for (int j = 0; j < screenHeight; j++)
 			{
-				for (int j = 0; j < screenHeight; j++)
-				{
-					auto it = blockGrid.find(EncodePos(i, j));
-					if (it != blockGrid.end()) // 벽/블럭일때
-					{
-						grid.emplace_back(Vector2(i, j), 0);
-					}
-					else// 땅일떄
-						grid.emplace_back(Vector2(i, j), 1);
-				}
+				auto it = blockGrid.find(EncodePos(i, j));
+				if (it != blockGrid.end()) // 벽/블럭일때
+					grid[EncodePos(i, j)] = 0;
+				else// 땅일떄
+					grid[EncodePos(i, j)] = 1;
 			}
+		}
 	}
 	else // 작을경우
 	{
@@ -330,16 +317,13 @@ std::vector<Craft::Vector2>& GameLevel::SetAstar()
 			{
 				auto it = blockGrid.find(EncodePos(i, j));
 				if (it != blockGrid.end()) // 벽/블럭일때
-				{
-					grid.emplace_back(Vector2(i, j), 0);
-				}
+					grid[EncodePos(i, j)] = 0;
 				else// 땅일떄
-					grid.emplace_back(Vector2(i, j), 1);
+					grid[EncodePos(i, j)] = 1;
+
 			}
 		}
 	}
-
-	
 	astar = std::make_shared<AStar>();
 	astar->FindPath(startPosition, targetPosition, grid, path);
 	return path;

@@ -82,11 +82,11 @@ private:
 	float cameraAccumX = 0.0f;
 
 	// 화면에 출력시킬 액터 고를때 쓰는 해시테이블(공간해싱)
-	std::unordered_map<int64_t, std::shared_ptr<Craft::Actor>> blockGrid;
+	std::unordered_map<int, std::shared_ptr<Craft::Actor>> blockGrid;
 	// 좌표를 해싱시키는 함수..
-	int64_t EncodePos(int x, int y) const
+	int EncodePos(int x, int y) const
 	{
-		return (int64_t)x * 31 + y;
+		return x * 31 + y;
 	}
 
 	//쿼드트리 루트 노드(호출될때마다 초기화됨..)
@@ -99,7 +99,7 @@ private:
 
 	// 에이스타 찾을때 전달할 그리드
 	// 0: 장애물벽. / 1: 움직일 수 있는 곳 // 2: 방문 노드 // 3: 시작.도착지
-	std::vector<std::pair<Vector2, int>> grid;
+	std::unordered_map<int64_t, int> grid;
 
 	// 에이스타용 목표위치 시작위치
 	Craft::Vector2 startPosition;

@@ -4,6 +4,16 @@
 
 class QuadTreeNode
 {
+	enum class NodeIndex
+	{
+		// 경계선에 걸치지 않고 완전 포함
+		TopLeft,
+		TopRight,
+		BottomLeft,
+		BottomRight,
+		Straddling, // 경계선에 걸치는 경우
+		OutOfArea // 영역을 벗어난 경우
+	};
 public:
 	QuadTreeNode(const bound& bounds, int capacity = 9, int depth = 0);
 	// 추가함수
@@ -24,6 +34,8 @@ public:
 private:
 	// 4개로 분할하는 함수
 	void subDivide();
+	NodeIndex TestRegion(const bound& targetBounds) const;
+	std::vector<QuadTreeNode::NodeIndex> GetQuads(const bound& targetBounds) const;
 private:
 	bound bounds;
 
